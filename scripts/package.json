@@ -1,0 +1,17 @@
+{
+  "name": "worthy-mobile-games-scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "tsx generate-data.ts",
+    "update-issue-comment": "tsx update-issue-comment.ts"
+  },
+  "dependencies": {
+    "octokit": "5.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.21",
+    "tsx": "4.21.0"
+  }
+}
