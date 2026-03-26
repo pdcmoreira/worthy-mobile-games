@@ -1,0 +1,32 @@
+name: Update Issue Criteria Comment
+
+on:
+  issues:
+    types: [labeled, unlabeled]
+
+permissions:
+  issues: write
+
+jobs:
+  update-comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        working-directory: scripts
+        run: npm install
+
+      - name: Update criteria comment
+        working-directory: scripts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: npm run update-issue-comment

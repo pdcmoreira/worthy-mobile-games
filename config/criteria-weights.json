@@ -1,0 +1,21 @@
+{
+  "scoring": {
+    "alpha": 0.85,
+    "minVotesForTrust": 5
+  },
+  "criteria": {
+    "gold": {
+      "balancedMultiplayer": 5,
+      "noProgressionGates": 10,
+      "cleanIAP": 15,
+      "noSubscription": 10
+    },
+    "silver": {
+      "noDarkPatterns": 10,
+      "noBypassableTimers": 15,
+      "noGacha": 20,
+      "noPayToWin": 25,
+      "noAds": 25
+    }
+  }
+}

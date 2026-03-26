@@ -1,0 +1,128 @@
+name: Suggest a Game
+description: Suggest a mobile game to be added to the Worthy Mobile Games curated list.
+title: "[Game] "
+labels: ["status/pending"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a game! Please fill in the details below.
+        Before submitting, make sure this game hasn't already been suggested by searching existing issues.
+
+  - type: input
+    id: game-name
+    attributes:
+      label: Game Name
+      description: The official name of the game.
+      placeholder: e.g. Monument Valley
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platforms
+      description: Which platforms is this game available on?
+      options:
+        - label: Android
+        - label: iOS
+
+  - type: input
+    id: android-url
+    attributes:
+      label: Google Play Store URL
+      description: Full URL to the game on the Play Store (leave empty if not on Android).
+      placeholder: https://play.google.com/store/apps/details?id=com.example.game
+
+  - type: input
+    id: ios-url
+    attributes:
+      label: Apple App Store URL
+      description: Full URL to the game on the App Store (leave empty if not on iOS).
+      placeholder: https://apps.apple.com/app/example-game/id123456789
+
+  - type: dropdown
+    id: payment-model
+    attributes:
+      label: Payment Model
+      description: How is the game monetized?
+      options:
+        - Completely free (no IAP)
+        - Premium (paid upfront, no IAP)
+        - Free with one-time full unlock
+        - Free/Paid with cosmetic-only IAP
+        - Free/Paid with content DLC
+        - Has subscription or battle pass
+        - Other (explain below)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: genres
+    attributes:
+      label: Genres
+      description: Select all that apply.
+      options:
+        - label: Action
+        - label: Adventure
+        - label: Puzzle
+        - label: RPG
+        - label: Strategy
+        - label: Simulation
+        - label: Platformer
+        - label: Racing
+        - label: Sports
+        - label: Card/Board
+        - label: Roguelike
+        - label: Tower Defense
+        - label: Idle/Incremental
+        - label: Narrative/Visual Novel
+        - label: Sandbox
+        - label: Music/Rhythm
+        - label: Horror
+        - label: Educational
+
+  - type: checkboxes
+    id: features
+    attributes:
+      label: Features
+      description: Select all that apply.
+      options:
+        - label: Gamepad support
+        - label: Offline play
+        - label: Multiplayer
+        - label: Cross-platform
+
+  - type: checkboxes
+    id: silver-criteria
+    attributes:
+      label: Silver Criteria (Baseline Requirements)
+      description: |
+        To be listed, the game **must** meet ALL of the following. Please confirm each one.
+        If the game fails any of these, it will not be accepted.
+      options:
+        - label: "**No ads** - The game has no ads of any kind (no banners, interstitials, rewarded ads, or offer walls)"
+          required: true
+        - label: "**No pay-to-win** - The game has no mechanics where paying gives a gameplay advantage"
+          required: true
+        - label: "**No gacha / loot boxes** - The game has no randomized paid rewards of any kind"
+          required: true
+        - label: "**No bypassable timers** - The game has no energy systems or timers that can be skipped with purchases"
+          required: true
+        - label: "**No dark patterns** - The game has no manufactured urgency, deceptive UI, or notification spam"
+          required: true
+
+  - type: textarea
+    id: why-worthy
+    attributes:
+      label: Why is this game worthy?
+      description: Beyond the baseline criteria above, explain what makes this game stand out.
+      placeholder: This game offers a complete experience for the purchase price, with no IAP and excellent game design...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Additional Notes
+      description: Any other relevant information (e.g. known warnings like energy systems, timed events).
