@@ -5,7 +5,6 @@
   },
   "criteria": {
     "gold": {
-      "balancedMultiplayer": 5,
       "noProgressionGates": 10,
       "cleanIAP": 15,
       "noSubscription": 10
