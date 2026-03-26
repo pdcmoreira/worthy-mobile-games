@@ -7,7 +7,6 @@ import { fileURLToPath } from "node:url";
 
 interface CriteriaResult {
   // Gold criteria (top, hardest)
-  balancedMultiplayer: boolean;
   noProgressionGates: boolean;
   cleanIAP: boolean;
   noSubscription: boolean;
@@ -75,7 +74,6 @@ const CRITERIA_FAIL_LABELS: Record<string, keyof CriteriaResult> = {
   "has/subscription": "noSubscription",
   "has/unclean-iap": "cleanIAP",
   "has/progression-gates": "noProgressionGates",
-  "has/unbalanced-multiplayer": "balancedMultiplayer",
 };
 
 const SILVER_CRITERIA: (keyof CriteriaResult)[] = [
@@ -104,7 +102,6 @@ function slugify(name: string): string {
 
 function evaluateCriteria(labelNames: string[]): CriteriaResult {
   const result: CriteriaResult = {
-    balancedMultiplayer: true,
     noProgressionGates: true,
     cleanIAP: true,
     noSubscription: true,

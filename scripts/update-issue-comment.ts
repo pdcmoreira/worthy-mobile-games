@@ -3,7 +3,6 @@ import { Octokit } from "octokit";
 // --- Types ---
 
 interface CriteriaResult {
-  balancedMultiplayer: boolean;
   noProgressionGates: boolean;
   cleanIAP: boolean;
   noSubscription: boolean;
@@ -25,7 +24,6 @@ const CRITERIA_FAIL_LABELS: Record<string, keyof CriteriaResult> = {
   "has/subscription": "noSubscription",
   "has/unclean-iap": "cleanIAP",
   "has/progression-gates": "noProgressionGates",
-  "has/unbalanced-multiplayer": "balancedMultiplayer",
 };
 
 const SILVER_CRITERIA: (keyof CriteriaResult)[] = [
@@ -42,7 +40,6 @@ const BOT_MARKER = "<!-- worthy-criteria-bot -->";
 
 function evaluateCriteria(labelNames: string[]): CriteriaResult {
   const result: CriteriaResult = {
-    balancedMultiplayer: true,
     noProgressionGates: true,
     cleanIAP: true,
     noSubscription: true,
@@ -83,9 +80,8 @@ function buildCommentBody(criteria: CriteriaResult): string {
 ### 🥇 Gold Criteria
 | | Criterion | Status |
 |---|---|---|
-| ${icon(criteria.balancedMultiplayer)} | Balanced multiplayer (no unbalanced purchasable competitive content) | ${status(criteria.balancedMultiplayer)} |
 | ${icon(criteria.noProgressionGates)} | No energy systems / artificial progression gates | ${status(criteria.noProgressionGates)} |
-| ${icon(criteria.cleanIAP)} | Clean IAP (one-time unlock / cosmetics / DLC only) | ${status(criteria.cleanIAP)} |
+| ${icon(criteria.cleanIAP)} | Clean IAP (sidegrades or new experiences only, base game feels complete) | ${status(criteria.cleanIAP)} |
 | ${icon(criteria.noSubscription)} | No subscription or battle pass | ${status(criteria.noSubscription)} |
 
 ### 🥈 Silver Criteria (Baseline)
