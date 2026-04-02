@@ -6,7 +6,7 @@
   "criteria": {
     "gold": {
       "noProgressionGates": 10,
-      "cleanIAP": 15,
+      "noIAP": 15,
       "noSubscription": 10
     },
     "silver": {
@@ -14,7 +14,8 @@
       "noBypassableTimers": 15,
       "noGacha": 20,
       "noPayToWin": 25,
-      "noAds": 25
+      "noAds": 25,
+      "cleanIAP": 15
     }
   }
 }

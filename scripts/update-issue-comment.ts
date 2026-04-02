@@ -4,8 +4,9 @@ import { Octokit } from "octokit";
 
 interface CriteriaResult {
   noProgressionGates: boolean;
-  cleanIAP: boolean;
+  noIAP: boolean;
   noSubscription: boolean;
+  cleanIAP: boolean;
   noDarkPatterns: boolean;
   noBypassableTimers: boolean;
   noGacha: boolean;
@@ -23,6 +24,7 @@ const CRITERIA_FAIL_LABELS: Record<string, keyof CriteriaResult> = {
   "has/dark-patterns": "noDarkPatterns",
   "has/subscription": "noSubscription",
   "has/unclean-iap": "cleanIAP",
+  "has/iap": "noIAP",
   "has/progression-gates": "noProgressionGates",
 };
 
@@ -32,6 +34,7 @@ const SILVER_CRITERIA: (keyof CriteriaResult)[] = [
   "noGacha",
   "noBypassableTimers",
   "noDarkPatterns",
+  "cleanIAP",
 ];
 
 const BOT_MARKER = "<!-- worthy-criteria-bot -->";
@@ -41,8 +44,9 @@ const BOT_MARKER = "<!-- worthy-criteria-bot -->";
 function evaluateCriteria(labelNames: string[]): CriteriaResult {
   const result: CriteriaResult = {
     noProgressionGates: true,
-    cleanIAP: true,
+    noIAP: true,
     noSubscription: true,
+    cleanIAP: true,
     noDarkPatterns: true,
     noBypassableTimers: true,
     noGacha: true,
@@ -81,7 +85,7 @@ function buildCommentBody(criteria: CriteriaResult): string {
 | | Criterion | Status |
 |---|---|---|
 | ${icon(criteria.noProgressionGates)} | No energy systems / artificial progression gates | ${status(criteria.noProgressionGates)} |
-| ${icon(criteria.cleanIAP)} | Clean IAP (sidegrades or new experiences only, base game feels complete) | ${status(criteria.cleanIAP)} |
+| ${icon(criteria.noIAP)} | No IAPs (except for full game purchases) | ${status(criteria.noIAP)} |
 | ${icon(criteria.noSubscription)} | No subscription or battle pass | ${status(criteria.noSubscription)} |
 
 ### 🥈 Silver Criteria (Baseline)
@@ -92,6 +96,7 @@ function buildCommentBody(criteria: CriteriaResult): string {
 | ${icon(criteria.noGacha)} | No gacha or loot boxes | ${status(criteria.noGacha)} |
 | ${icon(criteria.noPayToWin)} | No pay-to-win mechanics | ${status(criteria.noPayToWin)} |
 | ${icon(criteria.noAds)} | No ads of any kind | ${status(criteria.noAds)} |
+| ${icon(criteria.cleanIAP)} | Clean IAP (sidegrades or new experiences only, base game feels complete) | ${status(criteria.cleanIAP)} |
 
 ---
 *This checklist is automatically maintained. To change the evaluation, update the \`has/*\` labels on this issue.*`;
@@ -129,8 +134,8 @@ async function main() {
     .map((l) => (typeof l === "string" ? l : l.name ?? ""))
     .filter(Boolean);
 
-  const criteria = evaluateCriteria(labelNames);
-  const body = buildCommentBody(criteria);
+  // Only post/update the bot comment on validated issues
+  const isValidated = labelNames.includes("status/validated");
 
   // Find existing bot comment
   const { data: comments } = await octokit.rest.issues.listComments({
@@ -142,6 +147,24 @@ async function main() {
   const botComment = comments.find(
     (c) => c.body && c.body.includes(BOT_MARKER)
   );
+
+  if (!isValidated) {
+    // Remove stale bot comment if the label was removed
+    if (botComment) {
+      await octokit.rest.issues.deleteComment({
+        owner,
+        repo,
+        comment_id: botComment.id,
+      });
+      console.log(`Removed criteria comment from non-validated issue #${issueNumber}`);
+    } else {
+      console.log(`Issue #${issueNumber} is not validated, skipping.`);
+    }
+    return;
+  }
+
+  const criteria = evaluateCriteria(labelNames);
+  const body = buildCommentBody(criteria);
 
   if (botComment) {
     await octokit.rest.issues.updateComment({

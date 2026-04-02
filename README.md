@@ -21,21 +21,22 @@ Every game is evaluated against a checklist of criteria, split into two tiers.
 
 ### Silver (baseline - must ALL pass to be listed)
 
-| Criterion             | Description                                                        |
-| --------------------- | ------------------------------------------------------------------ |
-| No ads                | No ads of any kind - banners, interstitials, rewarded, offer walls |
-| No pay-to-win         | No mechanics where paying gives a gameplay advantage               |
-| No gacha / loot boxes | No randomized paid rewards of any kind                             |
-| No bypassable timers  | No energy systems or timers that can be skipped with purchases     |
-| No dark patterns      | No manufactured urgency, deceptive UI, or notification spam        |
+| Criterion             | Description                                                                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| No ads                | No ads of any kind - banners, interstitials, rewarded, offer walls                                                                                                 |
+| No pay-to-win         | No mechanics where paying gives a gameplay advantage                                                                                                               |
+| No gacha / loot boxes | No randomized paid rewards of any kind                                                                                                                             |
+| No bypassable timers  | No energy systems or timers that can be skipped with purchases                                                                                                     |
+| No dark patterns      | No manufactured urgency, deceptive UI, or notification spam                                                                                                        |
+| Clean IAP             | IAP limited to one-time unlock, cosmetics, or genuine content DLC. Purchased content must be sidegrades or new experiences, not upgrades. Base game feels complete |
 
 ### Gold (must ALSO pass for Gold tier)
 
-| Criterion                     | Description                                                                                                                                                        |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| No subscription / battle pass | No recurring payment models                                                                                                                                        |
-| Clean IAP                     | IAP limited to one-time unlock, cosmetics, or genuine content DLC. Purchased content must be sidegrades or new experiences, not upgrades. Base game feels complete |
-| No progression gates          | No energy systems or artificial gates (unless genuinely integral to design AND impossible to bypass with purchases)                                                |
+| Criterion                                    | Description                                                                                                        |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| No subscription / battle pass                | No recurring payment models                                                                                        |
+| No IAPs (except for full game purchases)     | No in-app purchases at all, with the sole exception of a one-time payment to unlock the full game                  |
+| No progression gates                         | No energy systems or artificial gates (unless genuinely integral to design AND impossible to bypass with purchases) |
 
 A game that **passes all Silver criteria** but fails one or more Gold criteria is listed as **Silver**.
 
@@ -57,7 +58,7 @@ criteria_score = sum(weight × pass) / sum(weight)
 
 Silver criteria carry more weight because they define the project's core identity.
 
-A Gold game scores **1.0** (all 130 points). The worst possible Silver game (fails all gold criteria) scores **0.731** (95 out of 130 points).
+A Gold game scores **1.0** (all 145 points). The worst possible Silver game (fails all gold criteria) scores **0.759** (110 out of 145 points).
 
 ### Step 2: Vote score - Bayesian average (0 to 1)
 
@@ -86,10 +87,10 @@ Criteria compliance makes up **85%** of the score. Votes make up **15%** - enoug
 
 In most cases, Gold games rank above Silver games because they have a higher criteria score and that score dominates the formula. For example:
 
-- A Gold game with zero votes scores approximately **0.93**
-- A Silver game (failing all gold criteria) with maximum votes scores approximately **0.77**
+- A Gold game with zero votes scores approximately **0.85**
+- A Silver game (failing all gold criteria) with maximum votes scores approximately **0.80**
 
-However, a Silver game that _barely_ misses Gold (e.g., only fails the "no subscription" criterion, worth 10 points out of 130) and has strong community votes could score **0.93**, matching or slightly outranking a new Gold game with zero votes.
+However, a Silver game that _barely_ misses Gold (e.g., only fails the "no subscription" criterion, worth 10 points out of 145) and has strong community votes could score **0.94**, matching or slightly outranking a new Gold game with zero votes.
 
 This is intentional. The tier badge on the website still clearly communicates the quality distinction - users always see whether a game is Gold or Silver. But a massively popular, community-validated game that barely misses Gold probably deserves more visibility than a brand-new Gold game that hasn't been validated by the community yet. As the new Gold game collects votes, it will naturally climb above.
 

@@ -8,9 +8,10 @@ import { fileURLToPath } from "node:url";
 interface CriteriaResult {
   // Gold criteria (top, hardest)
   noProgressionGates: boolean;
-  cleanIAP: boolean;
+  noIAP: boolean;
   noSubscription: boolean;
   // Silver criteria (bottom, baseline)
+  cleanIAP: boolean;
   noDarkPatterns: boolean;
   noBypassableTimers: boolean;
   noGacha: boolean;
@@ -73,6 +74,7 @@ const CRITERIA_FAIL_LABELS: Record<string, keyof CriteriaResult> = {
   "has/dark-patterns": "noDarkPatterns",
   "has/subscription": "noSubscription",
   "has/unclean-iap": "cleanIAP",
+  "has/iap": "noIAP",
   "has/progression-gates": "noProgressionGates",
 };
 
@@ -82,6 +84,7 @@ const SILVER_CRITERIA: (keyof CriteriaResult)[] = [
   "noGacha",
   "noBypassableTimers",
   "noDarkPatterns",
+  "cleanIAP",
 ];
 
 const TAG_PREFIXES: Record<string, Tag["type"]> = {
@@ -103,8 +106,9 @@ function slugify(name: string): string {
 function evaluateCriteria(labelNames: string[]): CriteriaResult {
   const result: CriteriaResult = {
     noProgressionGates: true,
-    cleanIAP: true,
+    noIAP: true,
     noSubscription: true,
+    cleanIAP: true,
     noDarkPatterns: true,
     noBypassableTimers: true,
     noGacha: true,
@@ -122,9 +126,7 @@ function evaluateCriteria(labelNames: string[]): CriteriaResult {
   return result;
 }
 
-function deriveTier(
-  criteria: CriteriaResult
-): "gold" | "silver" | "rejected" {
+function deriveTier(criteria: CriteriaResult): "gold" | "silver" | "rejected" {
   // Check silver baseline first
   const silverPass = SILVER_CRITERIA.every((key) => criteria[key]);
   if (!silverPass) return "rejected";
@@ -138,7 +140,7 @@ function computeScore(
   criteria: CriteriaResult,
   likes: number,
   allLikes: number[],
-  weights: CriteriaWeights
+  weights: CriteriaWeights,
 ): number {
   // Step 1: Criteria score (0-1)
   const allWeights = { ...weights.criteria.gold, ...weights.criteria.silver };
@@ -154,7 +156,7 @@ function computeScore(
 
   const criteriaScore = totalWeight > 0 ? weightedSum / totalWeight : 0;
 
-  // Step 2: Vote score — Bayesian average (0-1)
+  // Step 2: Vote score - Bayesian average (0-1)
   const maxLikes = Math.max(...allLikes, 1);
   const R = likes / maxLikes;
 
@@ -184,15 +186,18 @@ function extractTags(labelNames: string[]): Tag[] {
   return tags;
 }
 
-function extractPlatforms(labelNames: string[], issueBody: string): PlatformEntry[] {
+function extractPlatforms(
+  labelNames: string[],
+  issueBody: string,
+): PlatformEntry[] {
   const platforms: PlatformEntry[] = [];
 
   // Extract store URLs from the issue body (GitHub form responses)
   const androidUrlMatch = issueBody.match(
-    /play\.google\.com\/store\/apps\/details\?id=([a-zA-Z0-9_.]+)/
+    /play\.google\.com\/store\/apps\/details\?id=([a-zA-Z0-9_.]+)/,
   );
   const iosUrlMatch = issueBody.match(
-    /apps\.apple\.com\/[a-z]+\/app\/[^/]+\/id(\d+)/
+    /apps\.apple\.com\/[a-z]+\/app\/[^/]+\/id(\d+)/,
   );
 
   if (labelNames.includes("platform/android") && androidUrlMatch) {
@@ -217,7 +222,7 @@ function extractPlatforms(labelNames: string[], issueBody: string): PlatformEntr
 function extractDescription(issueBody: string): string {
   // GitHub form responses have headers like "### Why is this game worthy?"
   const match = issueBody.match(
-    /### Why is this game worthy\?\s*\n\s*\n([\s\S]*?)(?:\n###|\n$|$)/
+    /### Why is this game worthy\?\s*\n\s*\n([\s\S]*?)(?:\n###|\n$|$)/,
   );
   return match ? match[1].trim().slice(0, 500) : "";
 }
@@ -229,10 +234,11 @@ function extractGameName(issueTitle: string): string {
 
 function getStatus(
   labelNames: string[],
-  issueState: string
+  issueState: string,
 ): SearchEntry["status"] {
+  if (issueState === "closed" && labelNames.includes("status/validated"))
+    return "approved";
   if (issueState === "closed") return "closed";
-  if (labelNames.includes("status/approved")) return "approved";
   if (labelNames.includes("status/rejected")) return "rejected";
   if (labelNames.includes("status/needs-info")) return "needs-info";
   return "pending";
@@ -243,13 +249,11 @@ function getStatus(
 async function fetchAndroidIconUrl(storeId: string): Promise<string> {
   try {
     const res = await fetch(
-      `https://play.google.com/store/apps/details?id=${storeId}&hl=en`
+      `https://play.google.com/store/apps/details?id=${storeId}&hl=en`,
     );
     const html = await res.text();
     // The Play Store page includes the icon in an img tag or meta tag
-    const ogMatch = html.match(
-      /property="og:image"\s+content="([^"]+)"/
-    );
+    const ogMatch = html.match(/property="og:image"\s+content="([^"]+)"/);
     return ogMatch ? ogMatch[1] : "";
   } catch {
     return "";
@@ -258,9 +262,7 @@ async function fetchAndroidIconUrl(storeId: string): Promise<string> {
 
 async function fetchIosIconUrl(appId: string): Promise<string> {
   try {
-    const res = await fetch(
-      `https://itunes.apple.com/lookup?id=${appId}`
-    );
+    const res = await fetch(`https://itunes.apple.com/lookup?id=${appId}`);
     const data = (await res.json()) as {
       results: { artworkUrl512?: string }[];
     };
@@ -301,7 +303,7 @@ async function main() {
 
   const octokit = new Octokit({ auth: token });
   const weights: CriteriaWeights = JSON.parse(
-    readFileSync(WEIGHTS_PATH, "utf-8")
+    readFileSync(WEIGHTS_PATH, "utf-8"),
   );
 
   console.log("Fetching issues...");
@@ -334,7 +336,7 @@ async function main() {
   // Build search index (all issues)
   const searchIndex: SearchEntry[] = allIssues.map((issue) => {
     const labelNames = issue.labels
-      .map((l) => (typeof l === "string" ? l : l.name ?? ""))
+      .map((l) => (typeof l === "string" ? l : (l.name ?? "")))
       .filter(Boolean);
 
     return {
@@ -347,35 +349,31 @@ async function main() {
   // Process approved issues into games
   const approvedIssues = allIssues.filter((issue) => {
     const labelNames = issue.labels
-      .map((l) => (typeof l === "string" ? l : l.name ?? ""))
+      .map((l) => (typeof l === "string" ? l : (l.name ?? "")))
       .filter(Boolean);
-    return (
-      issue.state === "open" && labelNames.includes("status/approved")
-    );
+    return issue.state === "closed" && labelNames.includes("status/validated");
   });
 
   console.log(`Processing ${approvedIssues.length} approved games...`);
 
   // First pass: collect all likes for Bayesian average
-  const allLikes = approvedIssues.map(
-    (issue) => issue.reactions?.["+1"] ?? 0
-  );
+  const allLikes = approvedIssues.map((issue) => issue.reactions?.["+1"] ?? 0);
 
   // Second pass: build game objects
   const games: Game[] = [];
 
   for (const issue of approvedIssues) {
     const labelNames = issue.labels
-      .map((l) => (typeof l === "string" ? l : l.name ?? ""))
+      .map((l) => (typeof l === "string" ? l : (l.name ?? "")))
       .filter(Boolean);
 
     const criteria = evaluateCriteria(labelNames);
     const tier = deriveTier(criteria);
 
-    // Skip rejected games (shouldn't have status/approved, but safety check)
+    // Skip rejected games (shouldn't have status/validated, but safety check)
     if (tier === "rejected") {
       console.warn(
-        `Issue #${issue.number} "${issue.title}" has status/approved but fails silver criteria. Skipping.`
+        `Issue #${issue.number} "${issue.title}" has status/validated but fails silver criteria. Skipping.`,
       );
       continue;
     }
@@ -414,10 +412,16 @@ async function main() {
   const meta = {
     totalGames: games.length,
     lastUpdated: new Date().toISOString(),
-    tiers: { gold: games.filter((g) => g.tier === "gold").length, silver: games.filter((g) => g.tier === "silver").length },
+    tiers: {
+      gold: games.filter((g) => g.tier === "gold").length,
+      silver: games.filter((g) => g.tier === "silver").length,
+    },
     platforms: {
-      android: games.filter((g) => g.platforms.some((p) => p.platform === "android")).length,
-      ios: games.filter((g) => g.platforms.some((p) => p.platform === "ios")).length,
+      android: games.filter((g) =>
+        g.platforms.some((p) => p.platform === "android"),
+      ).length,
+      ios: games.filter((g) => g.platforms.some((p) => p.platform === "ios"))
+        .length,
     },
   };
 
@@ -428,11 +432,13 @@ async function main() {
   writeFileSync(join(outDir, "games.json"), JSON.stringify(games, null, 2));
   writeFileSync(
     join(outDir, "search-index.json"),
-    JSON.stringify(searchIndex, null, 2)
+    JSON.stringify(searchIndex, null, 2),
   );
   writeFileSync(join(outDir, "meta.json"), JSON.stringify(meta, null, 2));
 
-  console.log(`Generated ${games.length} games, ${searchIndex.length} search entries`);
+  console.log(
+    `Generated ${games.length} games, ${searchIndex.length} search entries`,
+  );
   console.log(`Output written to ${outDir}`);
 }
 
