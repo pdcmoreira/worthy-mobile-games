@@ -111,6 +111,17 @@ body:
           required: true
         - label: "**No dark patterns** - The game has no manufactured urgency, deceptive UI, or notification spam"
           required: true
+  
+  - type: checkboxes
+    id: gold-criteria
+    attributes:
+      label: Gold Criteria
+      description: |
+        If the game meets **all** of the following, it will be promoted to gold tier.
+      options:
+        - label: "**No subscription / battle pass** - The game must not offer any recurring payment model"
+        - label: "**No IAPs (except full game purchase)** - The game must have no in-app purchases whatsoever, with one exception: a single, one-time payment to unlock the full game"
+        - label: "**No progression gates** - The game must not have artificial barriers that halt player progress to encourage grinding or spending"
 
   - type: textarea
     id: why-worthy
