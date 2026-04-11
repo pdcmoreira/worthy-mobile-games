@@ -92,6 +92,7 @@ body:
         - label: Offline play
         - label: Multiplayer
         - label: Cross-platform
+        - label: Cloud saves
 
   - type: checkboxes
     id: silver-criteria
@@ -111,6 +112,18 @@ body:
           required: true
         - label: "**No dark patterns** - The game has no manufactured urgency, deceptive UI, or notification spam"
           required: true
+
+  - type: checkboxes
+    id: gold-criteria
+    attributes:
+      label: Gold Criteria (Optional)
+      description: |
+        Gold tier requires ALL of the following in addition to Silver.
+        Check any that apply — this helps reviewers but is not required to submit.
+      options:
+        - label: "**No subscription / battle pass** - No recurring payment model"
+        - label: "**No IAPs** (except complete game experiences like DLC campaigns or major expansions)"
+        - label: "**No progression gates** - No energy systems or artificial barriers to progress"
 
   - type: textarea
     id: why-worthy
