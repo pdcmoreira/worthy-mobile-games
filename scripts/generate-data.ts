@@ -197,7 +197,7 @@ function extractPlatforms(
     /play\.google\.com\/store\/apps\/details\?id=([a-zA-Z0-9_.]+)/,
   );
   const iosUrlMatch = issueBody.match(
-    /apps\.apple\.com\/[a-z]+\/app\/[^/]+\/id(\d+)/,
+    /apps\.apple\.com\/(?:[a-z]+\/)?app\/(?:[^/]+\/)?id(\d+)/,
   );
 
   if (labelNames.includes("platform/android") && androidUrlMatch) {
