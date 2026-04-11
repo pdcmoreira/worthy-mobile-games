@@ -3,8 +3,6 @@ name: Generate Data
 on:
   schedule:
     - cron: "0 3 * * *" # Nightly at 3 AM UTC
-  issues:
-    types: [labeled, unlabeled, edited, closed, reopened]
   workflow_dispatch: # Manual trigger
 
 permissions:
@@ -14,23 +12,6 @@ permissions:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    # Only run on issue events if they have relevant labels
-    if: >
-      github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'issues' && (
-        contains(github.event.label.name, 'status/') ||
-        contains(github.event.label.name, 'tier/') ||
-        contains(github.event.label.name, 'platform/') ||
-        contains(github.event.label.name, 'genre/') ||
-        contains(github.event.label.name, 'payment/') ||
-        contains(github.event.label.name, 'feature/') ||
-        contains(github.event.label.name, 'warning/') ||
-        contains(github.event.label.name, 'has/') ||
-        github.event.action == 'edited' ||
-        github.event.action == 'closed' ||
-        github.event.action == 'reopened'
-      ))
 
     steps:
       - name: Checkout backend repo
