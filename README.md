@@ -35,7 +35,7 @@ Every game is evaluated against a checklist of criteria, split into two tiers.
 | Criterion                                    | Description                                                                                                        |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | No subscription / battle pass                | No recurring payment models                                                                                        |
-| No IAPs (except for full game purchases)     | No in-app purchases at all, with the sole exception of a one-time payment to unlock the full game                  |
+| No IAPs (except complete game experiences)    | IAPs only acceptable if they provide complete game experiences (DLC campaigns, major content expansions, full game unlocks). Cosmetic shops, consumables, currency packs, and tip jars disqualify Gold |
 | No progression gates                         | No energy systems or artificial gates (unless genuinely integral to design AND impossible to bypass with purchases) |
 
 A game that **passes all Silver criteria** but fails one or more Gold criteria is listed as **Silver**.

@@ -85,7 +85,7 @@ function buildCommentBody(criteria: CriteriaResult): string {
 | | Criterion | Status |
 |---|---|---|
 | ${icon(criteria.noProgressionGates)} | No energy systems / artificial progression gates | ${status(criteria.noProgressionGates)} |
-| ${icon(criteria.noIAP)} | No IAPs (except for full game purchases) | ${status(criteria.noIAP)} |
+| ${icon(criteria.noIAP)} | No IAPs (except complete game experiences like DLC campaigns) | ${status(criteria.noIAP)} |
 | ${icon(criteria.noSubscription)} | No subscription or battle pass | ${status(criteria.noSubscription)} |
 
 ### 🥈 Silver Criteria (Baseline)
