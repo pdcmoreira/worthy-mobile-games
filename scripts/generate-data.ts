@@ -40,7 +40,6 @@ interface Game {
   tags: Tag[];
   criteria: CriteriaResult;
   score: number;
-  description: string;
   likes: number;
   dateAdded: string;
   dateUpdated: string;
@@ -219,19 +218,6 @@ function extractPlatforms(
   return platforms;
 }
 
-function extractDescription(issueBody: string): string {
-  // GitHub form responses have headers like "### Why is this game worthy?"
-  const match = issueBody.match(
-    /### Why is this game worthy\?\s*\n\s*\n([\s\S]*?)(?:\n###|\n$|$)/,
-  );
-  return match ? match[1].trim().slice(0, 500) : "";
-}
-
-function extractGameName(issueTitle: string): string {
-  // Issue title format: "[Game] Monument Valley"
-  return issueTitle.replace(/^\[Game\]\s*/, "").trim();
-}
-
 function getStatus(
   labelNames: string[],
   issueState: string,
@@ -341,7 +327,7 @@ async function main() {
 
     return {
       issueId: issue.number,
-      title: extractGameName(issue.title),
+      title: issue.title.trim(),
       status: getStatus(labelNames, issue.state),
     };
   });
@@ -378,12 +364,11 @@ async function main() {
       continue;
     }
 
-    const name = extractGameName(issue.title);
+    const name = issue.title.trim();
     const body = issue.body ?? "";
     const platforms = extractPlatforms(labelNames, body);
     const likes = issue.reactions?.["+1"] ?? 0;
 
-    // Fetch icon
     const iconUrl = await getIconUrl(platforms);
 
     const game: Game = {
@@ -396,7 +381,6 @@ async function main() {
       tags: extractTags(labelNames),
       criteria,
       score: computeScore(criteria, likes, allLikes, weights),
-      description: extractDescription(body),
       likes,
       dateAdded: issue.created_at,
       dateUpdated: issue.updated_at,

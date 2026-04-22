@@ -1,6 +1,6 @@
 name: Suggest a Game
 description: Suggest a mobile game to be added to the Worthy Mobile Games curated list.
-title: "[Game] "
+title: ""
 labels: ["status/pending"]
 body:
   - type: markdown
@@ -50,10 +50,10 @@ body:
         - Completely free (no IAP)
         - Premium (paid upfront, no IAP)
         - Free with one-time full unlock
-        - Free/Paid with cosmetic-only IAP
-        - Free/Paid with content DLC
-        - Has subscription or battle pass
-        - Other (explain below)
+        - Cosmetic IAP only
+        - Premium with content DLC
+        - Free with content DLC
+        - Subscription / Battle Pass
     validations:
       required: true
 
@@ -124,15 +124,6 @@ body:
         - label: "**No subscription / battle pass** - No recurring payment model"
         - label: "**No IAPs** (except complete game experiences like DLC campaigns or major expansions)"
         - label: "**No progression gates** - No energy systems or artificial barriers to progress"
-
-  - type: textarea
-    id: why-worthy
-    attributes:
-      label: Why is this game worthy?
-      description: Beyond the baseline criteria above, explain what makes this game stand out.
-      placeholder: This game offers a complete experience for the purchase price, with no IAP and excellent game design...
-    validations:
-      required: true
 
   - type: textarea
     id: additional-notes
