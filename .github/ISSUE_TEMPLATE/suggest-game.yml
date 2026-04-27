@@ -1,6 +1,5 @@
 name: Suggest a Game
 description: Suggest a mobile game to be added to the Worthy Mobile Games curated list.
-title: ""
 labels: ["status/pending"]
 body:
   - type: markdown
