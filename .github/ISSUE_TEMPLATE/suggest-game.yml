@@ -71,15 +71,16 @@ body:
         - label: Platformer
         - label: Racing
         - label: Sports
-        - label: Card/Board
+        - label: Card
+        - label: Board
         - label: Roguelike
         - label: Tower Defense
         - label: Idle/Incremental
         - label: Narrative/Visual Novel
-        - label: Sandbox
         - label: Music/Rhythm
         - label: Horror
         - label: Educational
+        - label: Word
 
   - type: checkboxes
     id: features
